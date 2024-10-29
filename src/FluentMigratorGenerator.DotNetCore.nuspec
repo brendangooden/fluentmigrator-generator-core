@@ -4,6 +4,7 @@
     <id>FluentMigratorGenerator.DotNetCore</id>
     <authors>Brendan Gooden</authors>
     <version>$version$</version>
+    <readme>..\README.md</readme>
     <projectUrl>https://github.com/brendangooden/fluentmigrator-generator-core</projectUrl>
     <licenseUrl>https://raw.githubusercontent.com/brendangooden/fluentmigrator-generator-core/master/LICENSE</licenseUrl>
     <description>Adds a command to the package manager console to generate migrations for FluentMigrator, used for targeting .NET Core / SDK Style Migration Projects.</description>
