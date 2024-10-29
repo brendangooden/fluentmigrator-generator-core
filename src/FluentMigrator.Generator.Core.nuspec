@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>FluentMigrator.Generator.Core</id>
+    <authors>Brendan Gooden</authors>
+    <version>$version$</version>
+    <projectUrl>https://github.com/brendangooden/fluentmigrator-generator-core</projectUrl>
+    <licenseUrl>https://raw.githubusercontent.com/brendangooden/fluentmigrator-generator-core/master/LICENSE</licenseUrl>
+    <description>Adds a command to the package manager console to generate migrations for FluentMigrator, used for targeting .NET Core / SDK Style Migration Projects.</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
+    <language>en-US</language>
+    <tags>fluentmigrator migrations dotnet core</tags>
+    <dependencies>
+      <dependency id="FluentMigrator" version="1.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="FluentMigrator.psm1" target="tools" />
+    <file src="FluentMigrator.psd1" target="tools" />
+    <file src="init.ps1" target="tools" />
+  </files>
+</package>
