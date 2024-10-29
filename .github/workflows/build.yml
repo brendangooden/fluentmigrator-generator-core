@@ -1,0 +1,68 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    if: "!contains(github.event.head_commit.message, 'chore:') && !contains(github.event.head_commit.message, 'documentation:')"
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        
+    - name: Setup DotNet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8'
+
+    - name: Setup Nuget
+      uses: nuget/setup-nuget@v2
+      with:
+        nuget-version: 'latest'
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0
+      with:
+        versionSpec: '5.x'
+
+    - name: Use GitVersion
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0
+
+    - name: Pack NuGet package
+      run: >
+        nuget pack ./src/FluentMigratorGenerator.DotNetCore.nuspec
+        -Version ${{ steps.gitversion.outputs.majorMinorPatch }}
+        -OutputDirectory ./artifacts
+
+    - name: Push NuGet package
+      if: github.ref == 'refs/heads/master'
+      run: >
+        dotnet nuget push ./artifacts/FluentMigratorGenerator.DotNetCore.${{ steps.gitversion.outputs.majorMinorPatch }}.nupkg 
+        --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+    - name: Create Release
+      if: github.ref == 'refs/heads/master'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.gitversion.outputs.majorMinorPatch }}
+        release_name: Release ${{ steps.gitversion.outputs.majorMinorPatch }}
+        body: Release ${{ steps.gitversion.outputs.majorMinorPatch }}
+
+    - name: Upload NuGet package as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: "Nuget Package"
+        path: "./artifacts/FluentMigratorGenerator.DotNetCore.${{ steps.gitversion.outputs.majorMinorPatch }}.nupkg"
